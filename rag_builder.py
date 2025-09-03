@@ -19,7 +19,7 @@ api_key = os.getenv("GOOGLE_API_KEY")
 
 # If not found in environment, use the hardcoded key for testing
 if not api_key:
-    api_key = "AIzaSyC-qStMNVA0oXiv3CPQchwns-StCBgYh48"
+    api_key = "use your own api key"
     print("Using hardcoded API key for testing. Please set GOOGLE_API_KEY environment variable for production.")
 
 # --- The Key Changes ---
