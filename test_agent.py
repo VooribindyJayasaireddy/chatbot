@@ -7,8 +7,20 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import AIMessage, HumanMessage
 
-# Import our new tool from the tools.py file
-from tools import search_company_docs, get_current_time, get_product_details # <-- Add get_product_details
+# Import all tools from the tools.py file
+from tools import (
+    get_current_time, 
+    get_product_details, 
+    get_all_products,
+    create_product,
+    update_product_put,
+    update_product_patch,
+    delete_product,
+    finalize_product,
+    delete_product_icon,
+    update_product_icon,
+    search_company_docs
+)
 
 # Optional: Set up logging for a better view of the process
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -25,14 +37,26 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
 # Create a prompt that tells the LLM about ALL of its tools
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a helpful assistant. You can access internal company documents to answer questions and get the current time."),
+        ("system", "You are a helpful assistant that can manage products, search company documents, and provide general information. You have access to a comprehensive set of tools for product management including creating, reading, updating, and deleting products."),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
     ]
 )
 
 # List all the tools our agent can use
-tools = [search_company_docs, get_current_time, get_product_details] # <-- Add the new tool to the list
+tools = [
+    get_current_time, 
+    get_product_details, 
+    get_all_products,
+    create_product,
+    update_product_put,
+    update_product_patch,
+    delete_product,
+    finalize_product,
+    delete_product_icon,
+    update_product_icon,
+    search_company_docs
+]
 
 # Create the agent
 agent = create_tool_calling_agent(llm, tools, prompt)

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0; }
+        .chat-container { width: 400px; height: 600px; background-color: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; border-radius: 8px; }
+        .chat-box { flex-grow: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; }
+        .message { margin-bottom: 10px; padding: 8px 12px; border-radius: 18px; max-width: 80%; }
+        .user-message { align-self: flex-end; background-color: #007bff; color: white; }
+        .bot-message { align-self: flex-start; background-color: #e2e2e2; }
+        .input-container { display: flex; padding: 10px; border-top: 1px solid #ddd; }
+        #userInput { flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 20px; outline: none; }
+        button { margin-left: 10px; padding: 8px 15px; border: none; background-color: #007bff; color: white; border-radius: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-box" id="chat-box">
+        <div class="message bot-message">Hello! How can I help you today?</div>
+    </div>
+    <div class="input-container">
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    async function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const chatBox = document.getElementById('chat-box');
+        const message = userInput.value.trim();
+
+        if (message === '') return;
+
+        // Add user message to chat box
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'message user-message';
+        userMessageDiv.textContent = message;
+        chatBox.appendChild(userMessageDiv);
+
+        // Clear input field
+        userInput.value = '';
+
+        // Auto-scroll to the bottom
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            // Send message to the backend
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            const botResponse = data.response;
+
+            // Add bot message to chat box
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'message bot-message';
+            botMessageDiv.textContent = botResponse;
+            chatBox.appendChild(botMessageDiv);
+
+            // Auto-scroll to the bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } catch (error) {
+            console.error('Error:', error);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'message bot-message';
+            errorDiv.textContent = 'Sorry, an error occurred.';
+            chatBox.appendChild(errorDiv);
+        }
+    }
+</script>
+
+</body>
+</html>
